@@ -1,0 +1,64 @@
+python
+import pandas as pd
+
+# Load blood test results from a CSV file
+def load_blood_test_results(file_path):
+    return pd.read_csv(file_path)
+
+# Define normal ranges for common blood test parameters
+normal_ranges = {
+    'WBC': (4.0, 11.0),  # White Blood Cells (x10^9/L)
+    'RBC': (4.5, 5.9),   # Red Blood Cells (x10^12/L)
+    'Hemoglobin': (13.5, 17.5),  # Hemoglobin (g/dL)
+    'Hematocrit': (41.0, 50.0),  # Hematocrit (%)
+    'Platelets': (150, 450),  # Platelets (x10^9/L)
+    'Cholesterol': (125, 200),  # Total Cholesterol (mg/dL)
+    'HDL': (40, 60),  # High-Density Lipoprotein (mg/dL)
+    'LDL': (0, 100),  # Low-Density Lipoprotein (mg/dL)
+    'Triglycerides': (0, 150),  # Triglycerides (mg/dL)
+    'Glucose': (70, 99),  # Fasting Glucose (mg/dL)
+}
+
+# Function to check if a value is within the normal range
+def is_normal(value, parameter):
+    if parameter in normal_ranges:
+        return normal_ranges[parameter][0] <= value <= normal_ranges[parameter][1]
+    else:
+        return None
+
+# Generate medical advice based on blood test results
+def generate_advice(blood_test_results):
+    advice = []
+    for parameter, value in blood_test_results.items():
+        if parameter in normal_ranges:
+            if is_normal(value, parameter):
+                advice.append(f"{parameter} is within the normal range.")
+            else:
+                if value < normal_ranges[parameter][0]:
+                    advice.append(f"{parameter} is below the normal range. Consult with your doctor.")
+                elif value > normal_ranges[parameter][1]:
+                    advice.append(f"{parameter} is above the normal range. Consult with your doctor.")
+    return advice
+
+# Main function
+def main():
+    file_path = 'blood_test_results.csv'
+    blood_test_results = load_blood_test_results(file_path)
+    blood_test_results = blood_test_results.iloc[0].to_dict()  # Assuming single row of results
+    
+    advice = generate_advice(blood_test_results)
+    
+    for line in advice:
+        print(line)
+
+if __name__ == "__main__":
+    main()
+
+#Make sure to install the pandas library if you haven't already
+sh pip install pandas
+
+#Save your blood test results in a CSV file (e.g., `blood_test_results.csv`) with columns matching the keys in the `normal_ranges` dictionary. Here's an example of what the CSV file might look like.
+csv WBC,RBC,Hemoglobin,Hematocrit,Platelets,Cholesterol,HDL,LDL,Triglycerides,Glucose
+5.5,4.8,15.2,45,250,190,50,80,140,90
+
+    
